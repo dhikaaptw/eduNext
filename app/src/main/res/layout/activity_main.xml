@@ -9,7 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:fontFamily="@font/poppinsmedium">
 
         <!-- TOP PROFILE BAR -->
         <LinearLayout
@@ -40,14 +41,16 @@
                     android:text="Dhika Putra"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:fontFamily="@font/poppinsmedium" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="SMA Al - Izhar"
                     android:textColor="#CCCCCC"
-                    android:textSize="13sp" />
+                    android:textSize="13sp"
+                    android:fontFamily="@font/poppinsmedium" />
             </LinearLayout>
 
             <ImageView
@@ -86,7 +89,8 @@
                 android:layout_height="wrap_content"
                 android:text="Search for a course..."
                 android:textColor="#808080"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:fontFamily="@font/poppinsmedium" />
         </LinearLayout>
 
         <!-- DISKON CARD -->
@@ -105,7 +109,8 @@
                 android:textColor="#000000"
                 android:textStyle="bold"
                 android:textSize="20sp"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/poppinsbold" />
 
             <Button
                 android:layout_width="100dp"
@@ -115,7 +120,8 @@
                 android:textColor="#FFFFFF"
                 android:backgroundTint="#000000"
                 android:paddingVertical="6dp"
-                android:paddingHorizontal="16dp" />
+                android:paddingHorizontal="16dp"
+                android:fontFamily="@font/poppinsmedium" />
         </LinearLayout>
 
         <!-- ENROLLED COURSES HEADER -->
@@ -126,7 +132,8 @@
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="15sp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/poppinsmedium" />
 
         <!-- TABS -->
         <LinearLayout
@@ -142,7 +149,8 @@
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:textSize="14sp"
-                android:layout_marginEnd="24dp" />
+                android:layout_marginEnd="24dp"
+                android:fontFamily="@font/poppinsmedium" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -150,14 +158,16 @@
                 android:text="Paused"
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
-                android:layout_marginEnd="24dp" />
+                android:layout_marginEnd="24dp"
+                android:fontFamily="@font/poppinsmedium" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Completed"
                 android:textColor="#FFFFFF"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:fontFamily="@font/poppinsmedium" />
         </LinearLayout>
 
         <!-- COURSE LIST -->
