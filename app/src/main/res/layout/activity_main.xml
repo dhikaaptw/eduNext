@@ -171,6 +171,7 @@
         </LinearLayout>
 
         <!-- COURSE LIST -->
+        <!-- COURSE LIST -->
         <LinearLayout
             android:id="@+id/courseListContainer"
             android:layout_width="match_parent"
@@ -178,19 +179,30 @@
             android:orientation="vertical">
 
             <!-- CARD 1 -->
-            <include layout="@layout/item_course_card" />
+            <include
+                android:id="@+id/courseCard1"
+                layout="@layout/item_course_card" />
 
             <!-- CARD 2 -->
-            <include layout="@layout/item_course_card" />
+            <include
+                android:id="@+id/courseCard2"
+                layout="@layout/item_course_card" />
 
             <!-- CARD 3 -->
-            <include layout="@layout/item_course_card" />
+            <include
+                android:id="@+id/courseCard3"
+                layout="@layout/item_course_card" />
 
             <!-- CARD 4 -->
-            <include layout="@layout/item_course_card" />
+            <include
+                android:id="@+id/courseCard4"
+                layout="@layout/item_course_card" />
 
             <!-- CARD 5 -->
-            <include layout="@layout/item_course_card" />
+            <include
+                android:id="@+id/courseCard5"
+                layout="@layout/item_course_card" />
         </LinearLayout>
+
     </LinearLayout>
 </ScrollView>
