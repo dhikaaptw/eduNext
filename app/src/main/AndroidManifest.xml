@@ -11,6 +11,12 @@
         android:theme="@style/Theme.EduNext"
         android:usesCleartextTraffic="true">
 
+        <!-- Activity Quiz - TAMBAHKAN INI -->
+        <activity
+            android:name=".QuizActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
         <!-- Activity Detail Course -->
         <activity
             android:name=".CourseDetailActivity"
@@ -19,7 +25,7 @@
         <!-- Activity Utama -->
         <activity
             android:name=".MainActivity"
-            android:exported="true"> <!-- WAJIB untuk Android 12+ -->
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
