@@ -1,310 +1,296 @@
-package com.example.edunext;
+package com.example.edunext; // sesuaikan package
 
-import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.view.View;
+import android.os.Handler;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class QuizActivity extends AppCompatActivity {
 
-    private TextView tvSoal, tvTimer;
+    private TextView tvSoal;
     private RadioGroup rgPilihan;
-    private RadioButton rbPilihan1, rbPilihan2, rbPilihan3, rbPilihan4, rbPilihan5;
-    private Button btnTanyaSnopati, btnKembali, btnSelesai;
+    private RadioButton rb1, rb2, rb3, rb4, rb5;
+    private Button btnKembali, btnSelesai;
 
-    private List<Question> questionList;
-    private int currentQuestionIndex = 0;
-    private CountDownTimer countDownTimer;
-    private long timeLeftInMillis = 600000; // 10 menit
-    private String selectedAnswer = "";
-    private int correctAnswers = 0;
+    private List<Question> questions = new ArrayList<>();
+    private int currentIndex = 0;
+    private boolean isAnswerRevealed = false; // penting: track apakah jawaban sudah di-*reveal*
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
-        // Inisialisasi views
-        initViews();
-
-        // Load questions
-        loadQuestions();
-
-        // Tampilkan soal pertama
-        displayQuestion();
-
-        // Start timer
-        startTimer();
-
-        // Set listeners
-        setListeners();
-    }
-
-    private void initViews() {
+        // find views (sesuaikan id)
         tvSoal = findViewById(R.id.tvSoal);
-        tvTimer = findViewById(R.id.tvTimer);
         rgPilihan = findViewById(R.id.rgPilihan);
-        rbPilihan1 = findViewById(R.id.rbPilihan1);
-        rbPilihan2 = findViewById(R.id.rbPilihan2);
-        rbPilihan3 = findViewById(R.id.rbPilihan3);
-        rbPilihan4 = findViewById(R.id.rbPilihan4);
-        rbPilihan5 = findViewById(R.id.rbPilihan5);
-        btnTanyaSnopati = findViewById(R.id.btnTanyaSnopati);
+        rb1 = findViewById(R.id.rbPilihan1);
+        rb2 = findViewById(R.id.rbPilihan2);
+        rb3 = findViewById(R.id.rbPilihan3);
+        rb4 = findViewById(R.id.rbPilihan4);
+        rb5 = findViewById(R.id.rbPilihan5);
         btnKembali = findViewById(R.id.btnKembali);
         btnSelesai = findViewById(R.id.btnSelesai);
-    }
 
-    private void loadQuestions() {
-        questionList = new ArrayList<>();
+        // load soal
+        loadQuestions();
 
-        // Soal 1 - dari screenshot
-        Question q1 = new Question();
-        q1.setSoal("Harga 5 buku dan 3 pensil adalah Rp41.000. Sedangkan harga 3 buku dan 2 pensil adalah Rp25.000. Berapa harga sebuah buku?");
-        q1.setPilihan1("Rp5.000");
-        q1.setPilihan2("Rp6.000");
-        q1.setPilihan3("Rp7.000");
-        q1.setPilihan4("Rp8.000");
-        q1.setPilihan5("Rp9.000");
-        q1.setJawabanBenar("Rp7.000");
-        questionList.add(q1);
+        // tampilkan soal awal
+        showQuestion(currentIndex);
 
-        // Soal 2
-        Question q2 = new Question();
-        q2.setSoal("Jika 2x + 3 = 11, berapakah nilai x?");
-        q2.setPilihan1("2");
-        q2.setPilihan2("3");
-        q2.setPilihan3("4");
-        q2.setPilihan4("5");
-        q2.setPilihan5("6");
-        q2.setJawabanBenar("4");
-        questionList.add(q2);
-
-        // Soal 3
-        Question q3 = new Question();
-        q3.setSoal("Sebuah persegi panjang memiliki panjang 12 cm dan lebar 8 cm. Berapakah luas persegi panjang tersebut?");
-        q3.setPilihan1("80 cm²");
-        q3.setPilihan2("84 cm²");
-        q3.setPilihan3("88 cm²");
-        q3.setPilihan4("92 cm²");
-        q3.setPilihan5("96 cm²");
-        q3.setJawabanBenar("96 cm²");
-        questionList.add(q3);
-
-        // Tambahkan soal lainnya sesuai kebutuhan
-    }
-
-    private void displayQuestion() {
-        if (currentQuestionIndex < questionList.size()) {
-            Question currentQuestion = questionList.get(currentQuestionIndex);
-
-            tvSoal.setText(currentQuestion.getSoal());
-            rbPilihan1.setText(currentQuestion.getPilihan1());
-            rbPilihan2.setText(currentQuestion.getPilihan2());
-            rbPilihan3.setText(currentQuestion.getPilihan3());
-            rbPilihan4.setText(currentQuestion.getPilihan4());
-            rbPilihan5.setText(currentQuestion.getPilihan5());
-
-            // Reset pilihan
-            rgPilihan.clearCheck();
-            resetRadioButtonColors();
-            selectedAnswer = "";
-        }
-    }
-
-    private void setListeners() {
-        // Listener untuk RadioGroup
+        // ketika user klik pilihan -> hanya preview (checked icon + preview bg)
         rgPilihan.setOnCheckedChangeListener((group, checkedId) -> {
-            RadioButton selectedRb = findViewById(checkedId);
-            if (selectedRb != null) {
-                selectedAnswer = selectedRb.getText().toString();
-            }
+            if (checkedId == -1) return;
+            int selectedIndex = radioIdToIndex(checkedId);
+            // preview only: tidak reveal benar/salah
+            previewSelection(selectedIndex);
         });
 
-        // Listener untuk button Selesai
-        btnSelesai.setOnClickListener(v -> {
-            if (selectedAnswer.isEmpty()) {
-                Toast.makeText(this, "Silakan pilih jawaban terlebih dahulu", Toast.LENGTH_SHORT).show();
+        // tombol kembali
+        btnKembali.setOnClickListener(v -> {
+            if (isAnswerRevealed) {
+                // kalau sedang dalam state revealed, kembali ke state preview (atau clear) pada soal yang sama
+                isAnswerRevealed = false;
+                previewResetUI(); // kembalikan ke kondisi awal (tapi tetap di soal yg sama)
+                updateBottomButtonText();
                 return;
             }
 
-            checkAnswer();
-        });
-
-        // Listener untuk button Kembali
-        btnKembali.setOnClickListener(v -> {
-            // Kembali ke CourseDetailActivity
-            finish();
-        });
-
-        // Listener untuk button Tanya Snopati
-        btnTanyaSnopati.setOnClickListener(v -> {
-            Toast.makeText(this, "Fitur Tanya Snopati segera hadir", Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    private void checkAnswer() {
-        Question currentQuestion = questionList.get(currentQuestionIndex);
-        boolean isCorrect = selectedAnswer.equals(currentQuestion.getJawabanBenar());
-
-        if (isCorrect) {
-            correctAnswers++;
-        }
-
-        // Highlight jawaban
-        highlightAnswer(isCorrect);
-
-        // Disable selection setelah menjawab
-        disableRadioButtons();
-        btnSelesai.setEnabled(false);
-
-        // Pindah ke soal berikutnya setelah delay
-        new android.os.Handler().postDelayed(() -> {
-            if (currentQuestionIndex < questionList.size() - 1) {
-                currentQuestionIndex++;
-                enableRadioButtons();
-                btnSelesai.setEnabled(true);
-                displayQuestion();
+            if (currentIndex > 0) {
+                currentIndex--;
+                showQuestion(currentIndex);
+                isAnswerRevealed = false;
+                previewResetUI();
+                updateBottomButtonText();
             } else {
-                // Quiz selesai
-                showResult();
+                // jika sudah di soal pertama, behavior: finish activity atau disable
+                finish();
             }
-        }, 2000);
+        });
+
+        // tombol Lanjut / Selesai
+        btnSelesai.setOnClickListener(v -> {
+            int checkedId = rgPilihan.getCheckedRadioButtonId();
+            if (checkedId == -1) {
+                Toast.makeText(QuizActivity.this, "Pilih jawaban dulu", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            int selectedIndex = radioIdToIndex(checkedId);
+
+            if (!isAnswerRevealed) {
+                // pertama kali klik -> reveal final (warna hijau/merah)
+                revealAnswer(selectedIndex);
+                isAnswerRevealed = true;
+                updateBottomButtonText(); // ubah teks ke "Selesai" jika soal terakhir (tetap)
+                // lanjut otomatis setelah delay supaya user lihat feedback
+                new Handler().postDelayed(() -> {
+                    if (currentIndex < questions.size() - 1) {
+                        currentIndex++;
+                        isAnswerRevealed = false;
+                        showQuestion(currentIndex);
+                        previewResetUI();
+                        updateBottomButtonText();
+                    } else {
+                        // sudah soal terakhir -> submit/finish
+                        submitQuiz();
+                    }
+                }, 700); // delay 700ms (sesuaikan)
+            } else {
+                // jika sudah revealed (user tekan lagi), langsung pindah (fallback)
+                if (currentIndex < questions.size() - 1) {
+                    currentIndex++;
+                    isAnswerRevealed = false;
+                    showQuestion(currentIndex);
+                    previewResetUI();
+                    updateBottomButtonText();
+                } else {
+                    submitQuiz();
+                }
+            }
+        });
+
+        updateBottomButtonText();
     }
 
-    private void highlightAnswer(boolean isCorrect) {
-        Question currentQuestion = questionList.get(currentQuestionIndex);
+    // ---------- Helper: loadQuestions ----------
+    private void loadQuestions() {
+        questions.clear();
+        questions.add(new Question(
+                "Harga 5 buku dan 3 pensil adalah Rp41.000. Sedangkan harga 3 buku dan 2 pensil adalah Rp25.000. Berapakah harga sebuah buku?",
+                new ArrayList<>(Arrays.asList("Rp5.000","Rp6.000","Rp7.000","Rp8.000","Rp9.000")),
+                2)); // index 2 => Rp7.000
 
-        // Highlight jawaban yang dipilih
-        RadioButton selectedRb = null;
-        if (rbPilihan1.isChecked()) {
-            selectedRb = rbPilihan1;
-        } else if (rbPilihan2.isChecked()) {
-            selectedRb = rbPilihan2;
-        } else if (rbPilihan3.isChecked()) {
-            selectedRb = rbPilihan3;
-        } else if (rbPilihan4.isChecked()) {
-            selectedRb = rbPilihan4;
-        } else if (rbPilihan5.isChecked()) {
-            selectedRb = rbPilihan5;
-        }
+        questions.add(new Question(
+                "Diketahui barisan aritmatika dengan suku ke-3 adalah 11 dan suku ke-7 adalah 23. Jumlah 10 suku pertama barisan tersebut adalah...",
+                new ArrayList<>(Arrays.asList("155","165","175","185","195")),
+                2));
 
+        questions.add(new Question(
+                "Perbandingan uang Ali dan Budi adalah 3 : 5. Jika jumlah uang mereka Rp800.000, maka selisih uang mereka adalah...",
+                new ArrayList<>(Arrays.asList("Rp100.000","Rp150.000","Rp200.000","Rp250.000","Rp300.000")),
+                2));
+    }
+
+    // ---------- tampilkan soal ----------
+    private void showQuestion(int index) {
+        Question q = questions.get(index);
+        tvSoal.setText(q.getText());
+
+        List<String> opts = q.getOptions();
+        rb1.setText(opts.get(0));
+        rb2.setText(opts.get(1));
+        rb3.setText(opts.get(2));
+        rb4.setText(opts.get(3));
+        rb5.setText(opts.get(4));
+
+        // set default icons & backgrounds
+        Drawable unchecked = ContextCompat.getDrawable(this, R.drawable.ic_radio_unchecked);
+        setRadioDrawableEnd(rb1, unchecked);
+        setRadioDrawableEnd(rb2, unchecked);
+        setRadioDrawableEnd(rb3, unchecked);
+        setRadioDrawableEnd(rb4, unchecked);
+        setRadioDrawableEnd(rb5, unchecked);
+
+        rb1.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        rb2.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        rb3.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        rb4.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        rb5.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+
+        // clear selection (we clear now when switching question)
+        rgPilihan.setOnCheckedChangeListener(null);
+        rgPilihan.clearCheck();
+        rgPilihan.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == -1) return;
+            previewSelection(radioIdToIndex(checkedId));
+        });
+    }
+
+    // ---------- previewSelection: HANYA preview ----------
+    private void previewSelection(int selectedIndex) {
+        Drawable checked = ContextCompat.getDrawable(this, R.drawable.ic_radio_checked);
+        Drawable unchecked = ContextCompat.getDrawable(this, R.drawable.ic_radio_unchecked);
+
+        // set all to unchecked + default bg
+        setRadioDrawableEnd(rb1, unchecked);
+        setRadioDrawableEnd(rb2, unchecked);
+        setRadioDrawableEnd(rb3, unchecked);
+        setRadioDrawableEnd(rb4, unchecked);
+        setRadioDrawableEnd(rb5, unchecked);
+
+        rb1.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        rb2.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        rb3.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        rb4.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        rb5.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+
+        RadioButton selectedRb = getRadioButtonByIndex(selectedIndex);
         if (selectedRb != null) {
-            if (isCorrect) {
-                selectedRb.setBackgroundColor(Color.parseColor("#4CAF50")); // Hijau
-                selectedRb.setTextColor(Color.WHITE);
-            } else {
-                selectedRb.setBackgroundColor(Color.parseColor("#F44336")); // Merah
-                selectedRb.setTextColor(Color.WHITE);
+            setRadioDrawableEnd(selectedRb, checked);
+            selectedRb.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        }
+    }
+
+    private void revealAnswer(int selectedIndex) {
+        int correct = questions.get(currentIndex).getCorrectIndex();
+
+        // set all to unchecked icon removed, we'll set checked icon to correct and selected
+        Drawable checked = ContextCompat.getDrawable(this, R.drawable.ic_radio_checked);
+        Drawable unchecked = ContextCompat.getDrawable(this, R.drawable.ic_radio_unchecked);
+
+        setRadioDrawableEnd(rb1, unchecked);
+        setRadioDrawableEnd(rb2, unchecked);
+        setRadioDrawableEnd(rb3, unchecked);
+        setRadioDrawableEnd(rb4, unchecked);
+        setRadioDrawableEnd(rb5, unchecked);
+
+        RadioButton selectedRb = getRadioButtonByIndex(selectedIndex);
+        RadioButton correctRb = getRadioButtonByIndex(correct);
+
+        // show final states
+        if (selectedIndex == correct) {
+            // correct pick
+            if (selectedRb != null) {
+                setRadioDrawableEnd(selectedRb, checked);
+                selectedRb.setBackground(ContextCompat.getDrawable(this, R.drawable.bg_option_correct));
+            }
+        } else {
+            // wrong pick -> red, correct -> green
+            if (selectedRb != null) {
+                setRadioDrawableEnd(selectedRb, checked);
+                selectedRb.setBackground(ContextCompat.getDrawable(this, R.drawable.bg_option_incorrect));
+            }
+            if (correctRb != null) {
+                setRadioDrawableEnd(correctRb, checked);
+                correctRb.setBackground(ContextCompat.getDrawable(this, R.drawable.bg_option_correct));
             }
         }
+    }
 
-        // Jika salah, highlight jawaban yang benar
-        if (!isCorrect) {
-            highlightCorrectAnswer(currentQuestion.getJawabanBenar());
+    private void previewResetUI() {
+        Drawable unchecked = ContextCompat.getDrawable(this, R.drawable.ic_radio_unchecked);
+        setRadioDrawableEnd(rb1, unchecked);
+        setRadioDrawableEnd(rb2, unchecked);
+        setRadioDrawableEnd(rb3, unchecked);
+        setRadioDrawableEnd(rb4, unchecked);
+        setRadioDrawableEnd(rb5, unchecked);
+
+        rb1.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        rb2.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        rb3.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        rb4.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        rb5.setBackground(ContextCompat.getDrawable(this, R.drawable.option_bg));
+        // do not call rgPilihan.clearCheck() here unless you intentionally want to clear selection
+    }
+
+    private int radioIdToIndex(int id) {
+        if (id == R.id.rbPilihan1) return 0;
+        if (id == R.id.rbPilihan2) return 1;
+        if (id == R.id.rbPilihan3) return 2;
+        if (id == R.id.rbPilihan4) return 3;
+        if (id == R.id.rbPilihan5) return 4;
+        return -1;
+    }
+
+    private RadioButton getRadioButtonByIndex(int idx) {
+        switch (idx) {
+            case 0: return rb1;
+            case 1: return rb2;
+            case 2: return rb3;
+            case 3: return rb4;
+            case 4: return rb5;
+            default: return null;
         }
     }
 
-    private void highlightCorrectAnswer(String correctAnswer) {
-        if (rbPilihan1.getText().toString().equals(correctAnswer)) {
-            rbPilihan1.setBackgroundColor(Color.parseColor("#4CAF50"));
-            rbPilihan1.setTextColor(Color.WHITE);
-        } else if (rbPilihan2.getText().toString().equals(correctAnswer)) {
-            rbPilihan2.setBackgroundColor(Color.parseColor("#4CAF50"));
-            rbPilihan2.setTextColor(Color.WHITE);
-        } else if (rbPilihan3.getText().toString().equals(correctAnswer)) {
-            rbPilihan3.setBackgroundColor(Color.parseColor("#4CAF50"));
-            rbPilihan3.setTextColor(Color.WHITE);
-        } else if (rbPilihan4.getText().toString().equals(correctAnswer)) {
-            rbPilihan4.setBackgroundColor(Color.parseColor("#4CAF50"));
-            rbPilihan4.setTextColor(Color.WHITE);
-        } else if (rbPilihan5.getText().toString().equals(correctAnswer)) {
-            rbPilihan5.setBackgroundColor(Color.parseColor("#4CAF50"));
-            rbPilihan5.setTextColor(Color.WHITE);
+    private void setRadioDrawableEnd(RadioButton rb, Drawable d) {
+        if (rb == null) return;
+        if (d == null) {
+            rb.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+            return;
+        }
+        d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
+        rb.setCompoundDrawablesWithIntrinsicBounds(null, null, d, null);
+    }
+
+    private void updateBottomButtonText() {
+        if (currentIndex < questions.size() - 1) {
+            btnSelesai.setText("Lanjut");
+        } else {
+            btnSelesai.setText("Selesai");
         }
     }
 
-    private void resetRadioButtonColors() {
-        int defaultColor = Color.parseColor("#1A1A1A");
-        int defaultTextColor = Color.WHITE;
-
-        rbPilihan1.setBackgroundColor(defaultColor);
-        rbPilihan2.setBackgroundColor(defaultColor);
-        rbPilihan3.setBackgroundColor(defaultColor);
-        rbPilihan4.setBackgroundColor(defaultColor);
-        rbPilihan5.setBackgroundColor(defaultColor);
-
-        rbPilihan1.setTextColor(defaultTextColor);
-        rbPilihan2.setTextColor(defaultTextColor);
-        rbPilihan3.setTextColor(defaultTextColor);
-        rbPilihan4.setTextColor(defaultTextColor);
-        rbPilihan5.setTextColor(defaultTextColor);
-    }
-
-    private void disableRadioButtons() {
-        rbPilihan1.setEnabled(false);
-        rbPilihan2.setEnabled(false);
-        rbPilihan3.setEnabled(false);
-        rbPilihan4.setEnabled(false);
-        rbPilihan5.setEnabled(false);
-    }
-
-    private void enableRadioButtons() {
-        rbPilihan1.setEnabled(true);
-        rbPilihan2.setEnabled(true);
-        rbPilihan3.setEnabled(true);
-        rbPilihan4.setEnabled(true);
-        rbPilihan5.setEnabled(true);
-    }
-
-    private void startTimer() {
-        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                timeLeftInMillis = millisUntilFinished;
-                updateTimerText();
-            }
-
-            @Override
-            public void onFinish() {
-                Toast.makeText(QuizActivity.this, "Waktu habis!", Toast.LENGTH_SHORT).show();
-                showResult();
-            }
-        }.start();
-    }
-
-    private void updateTimerText() {
-        int minutes = (int) (timeLeftInMillis / 1000) / 60;
-        int seconds = (int) (timeLeftInMillis / 1000) % 60;
-
-        String timeFormatted = String.format("%d Menit", minutes);
-        tvTimer.setText(timeFormatted);
-    }
-
-    private void showResult() {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
-
-        String message = "Quiz Selesai!\nJawaban Benar: " + correctAnswers + "/" + questionList.size();
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-
-        // Kembali ke CourseDetailActivity
+    private void submitQuiz() {
         finish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
     }
 }
