@@ -67,7 +67,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Progress Bar -->
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleHorizontal"
@@ -278,7 +277,8 @@
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:background="@drawable/bg_button_primary"
+                app:backgroundTint="@null"
+                android:background="@drawable/btn_yellow_rounded"
                 android:layout_marginBottom="12dp"
                 android:elevation="4dp"
                 android:stateListAnimator="@null" />
@@ -292,11 +292,11 @@
                 android:textColor="#FCD34D"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                app:backgroundTint="@null"
                 android:background="@drawable/bg_button_outline"
                 android:stateListAnimator="@null" />
         </LinearLayout>
 
-        <!-- Bottom Spacing -->
         <Space
             android:layout_width="match_parent"
             android:layout_height="24dp" />

@@ -20,7 +20,9 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
+            <!-- 👇 PASTIKAN ID INI ADA DAN BENAR 👇 -->
             <TextView
+                android:id="@+id/course_name_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pengetahuan Kuantitatif"
@@ -34,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
+                <!-- Bagian Tag (300+ Soal, dll) tidak perlu diubah -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -75,7 +77,9 @@
                 android:paddingVertical="4dp" />
         </LinearLayout>
 
+        <!-- 👇 PASTIKAN ID INI JUGA ADA DAN BENAR 👇 -->
         <ImageView
+            android:id="@+id/course_image_imageview"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:src="@drawable/pengetahuan_kuantitatif"

@@ -181,27 +181,12 @@
 
             <!-- CARD 1 -->
             <include
-                android:id="@+id/courseCard1"
+                android:id="@+id/card_pk"
                 layout="@layout/item_course_card" />
 
             <!-- CARD 2 -->
             <include
-                android:id="@+id/courseCard2"
-                layout="@layout/item_course_card" />
-
-            <!-- CARD 3 -->
-            <include
-                android:id="@+id/courseCard3"
-                layout="@layout/item_course_card" />
-
-            <!-- CARD 4 -->
-            <include
-                android:id="@+id/courseCard4"
-                layout="@layout/item_course_card" />
-
-            <!-- CARD 5 -->
-            <include
-                android:id="@+id/courseCard5"
+                android:id="@+id/card_pm"
                 layout="@layout/item_course_card" />
         </LinearLayout>
 

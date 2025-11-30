@@ -7,6 +7,6 @@ import retrofit2.http.POST;
 
 public interface ApiService {
     @Headers("Content-Type: application/json")
-    @POST("api/v1/chat") // sesuai dokumentasi kamu
+    @POST("api/v1/chat")
     Call<SenopatiResponse> chatWithSenopati(@Body SenopatiRequest request);
 }

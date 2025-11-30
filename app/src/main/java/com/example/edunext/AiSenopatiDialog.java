@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
@@ -53,12 +54,13 @@ public class AiSenopatiDialog extends Dialog {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.activity_ai_senopati, null);
         setContentView(view);
 
-        // 🔹 Init View
-        etMessage = findViewById(R.id.etMessage);
-        btnSend = findViewById(R.id.btnSend);
-        btnClose = findViewById(R.id.btnClose);
-        rvChatMessages = findViewById(R.id.rvChatMessages);
-        layoutTyping = findViewById(R.id.layoutTyping);
+        // 🔹 Init View (INI BENAR)
+        etMessage = view.findViewById(R.id.etMessage);
+        btnSend = view.findViewById(R.id.btnSend);
+        btnClose = view.findViewById(R.id.btnClose);
+        rvChatMessages = view.findViewById(R.id.rvChatMessages);
+        layoutTyping = view.findViewById(R.id.layoutTyping);
+
 
         // 🔹 Setup RecyclerView
         chatAdapter = new ChatAdapter(getContext(), chatMessages);

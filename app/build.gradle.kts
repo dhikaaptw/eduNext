@@ -42,4 +42,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    val room_version = "2.6.1" // val, bukan def di .kts
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version") // <-- GANTI DENGAN "kapt"
+
+    // Gson (untuk mengubah List menjadi String)
+    implementation("com.google.code.gson:gson:2.10.1")
 }
