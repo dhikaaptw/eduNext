@@ -25,7 +25,6 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     @NonNull
     @Override
     public CourseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Menggunakan layout item_course_card.xml Anda
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_course_card, parent, false);
         return new CourseViewHolder(view);
     }
@@ -34,19 +33,14 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     public void onBindViewHolder(@NonNull CourseViewHolder holder, int position) {
         Course course = courseList.get(position);
 
-        // Set data ke dalam view
         holder.courseName.setText(course.getName());
         holder.courseImage.setImageResource(course.getImageResource());
 
-        // BAGIAN PALING PENTING: Menambahkan OnClickListener ke tombol "Lanjut"
         holder.lanjutButton.setOnClickListener(v -> {
-            // Membuat Intent untuk membuka QuizActivity
             Intent intent = new Intent(context, QuizActivity.class);
 
-            // Menambahkan quizId dari item yang diklik
             intent.putExtra("QUIZ_ID", course.getQuizId());
 
-            // Memulai QuizActivity
             context.startActivity(intent);
         });
     }
@@ -56,7 +50,6 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         return courseList.size();
     }
 
-    // ViewHolder berisi referensi ke view di dalam setiap item
     public static class CourseViewHolder extends RecyclerView.ViewHolder {
         TextView courseName;
         ImageView courseImage;

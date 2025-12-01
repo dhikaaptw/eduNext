@@ -162,7 +162,15 @@ public class QuizActivity extends AppCompatActivity {
     private void setupListeners() {
         btnSenopati.setOnClickListener(v -> {
             Log.d(TAG, "🤖 Membuka Senopati AI Dialog");
-            AiSenopatiDialog dialog = new AiSenopatiDialog(QuizActivity.this);
+
+            // Ambil soal yang sedang ditampilkan
+            Question currentQuestion = questions.get(currentIndex);
+
+            // Buat dialog dan kirim data soal
+            AiSenopatiDialog dialog = new AiSenopatiDialog(
+                    QuizActivity.this,
+                    currentQuestion
+            );
             dialog.show();
         });
 
